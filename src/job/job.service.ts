@@ -50,11 +50,22 @@ export class JobService {
     await this.jobRepository.remove(job);
   }
 
-    async run(id: string): Promise<Job> {
-    const job = await this.findOne(id);
+  async run(id: string): Promise<Job> {
+  const job = await this.findOne(id);
 
     job.status = JobStatus.RUNNING;
+    await this.jobRepository.save(job);
 
-    return this.jobRepository.save(job);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+
+      job.status = JobStatus.COMPLETED;
+      return await this.jobRepository.save(job);
+    } catch (error) {
+      job.status = JobStatus.FAILED;
+      await this.jobRepository.save(job);
+
+      throw error;
+    }
   }
 }
