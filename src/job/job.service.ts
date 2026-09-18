@@ -16,4 +16,12 @@ export class JobService {
 
     return this.jobRepository.save(job);
   }
+
+  async findAll(): Promise<Job[]> {
+  return this.jobRepository.find({
+    order: {
+      createdAt: 'DESC',
+    },
+  });
+}
 }
