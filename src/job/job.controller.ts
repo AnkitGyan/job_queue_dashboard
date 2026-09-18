@@ -3,6 +3,8 @@ import { JobService } from './job.service.js';
 import { Post, Body, Get, Param, Delete } from '@nestjs/common';
 import { CreateJobDto } from './dto/create-job.dto.js';
 
+
+
 @Controller('jobs')
 export class JobController {
   constructor(private readonly jobService: JobService) {}
@@ -25,5 +27,10 @@ export class JobController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.jobService.remove(id);
+  }
+
+  @Post(':id/run')
+  run(@Param('id') id: string) {
+    return this.jobService.run(id);
   }
 }

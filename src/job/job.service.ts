@@ -1,7 +1,7 @@
 import { Injectable,  NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Job } from './job.entity.js'
+import { Job, JobStatus } from './job.entity.js'
 import { CreateJobDto } from './dto/create-job.dto.js';
 
 
@@ -48,5 +48,13 @@ export class JobService {
     }
 
     await this.jobRepository.remove(job);
+  }
+
+    async run(id: string): Promise<Job> {
+    const job = await this.findOne(id);
+
+    job.status = JobStatus.RUNNING;
+
+    return this.jobRepository.save(job);
   }
 }
