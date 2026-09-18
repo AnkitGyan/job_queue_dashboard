@@ -37,4 +37,16 @@ export class JobService {
 
     return job;
   }
+
+    async remove(id: string): Promise<void> {
+    const job = await this.jobRepository.findOne({
+      where: { id },
+    });
+
+    if (!job) {
+      throw new NotFoundException(`Job with id ${id} not found`);
+    }
+
+    await this.jobRepository.remove(job);
+  }
 }

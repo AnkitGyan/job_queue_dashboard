@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { JobService } from './job.service.js';
-import { Post, Body, Get, Param } from '@nestjs/common';
+import { Post, Body, Get, Param, Delete } from '@nestjs/common';
 import { CreateJobDto } from './dto/create-job.dto.js';
 
 @Controller('jobs')
@@ -20,5 +20,10 @@ export class JobController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.jobService.findOne(id);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.jobService.remove(id);
   }
 }
