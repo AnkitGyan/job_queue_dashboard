@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable,  NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Job } from './job.entity.js'
 import { CreateJobDto } from './dto/create-job.dto.js';
+
 
 @Injectable()
 export class JobService {
@@ -25,9 +26,15 @@ export class JobService {
     });
   }
 
-  async findOne(id: string): Promise<Job | null> {
-    return this.jobRepository.findOne({
+    async findOne(id: string): Promise<Job> {
+    const job = await this.jobRepository.findOne({
       where: { id },
     });
+
+    if (!job) {
+      throw new NotFoundException(`Job with id ${id} not found`);
+    }
+
+    return job;
   }
 }
