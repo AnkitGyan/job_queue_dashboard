@@ -17,11 +17,17 @@ export class JobService {
     return this.jobRepository.save(job);
   }
 
-  async findAll(): Promise<Job[]> {
-  return this.jobRepository.find({
-    order: {
-      createdAt: 'DESC',
-    },
-  });
-}
+    async findAll(): Promise<Job[]> {
+    return this.jobRepository.find({
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+  }
+
+  async findOne(id: string): Promise<Job | null> {
+    return this.jobRepository.findOne({
+      where: { id },
+    });
+  }
 }
