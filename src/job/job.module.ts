@@ -4,6 +4,7 @@ import { Job } from './job.entity.js'
 import { JobController } from './job.controller.js';
 import { JobService } from './job.service.js';
 import { BullModule } from '@nestjs/bullmq';
+import { JobProcessor } from './job.processor.js';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Job]),
@@ -13,7 +14,7 @@ import { BullModule } from '@nestjs/bullmq';
 })
 ],
   controllers: [JobController],
-  providers: [JobService],
+  providers: [JobService, JobProcessor],
   exports: [TypeOrmModule],
 })
 export class JobModule {}
