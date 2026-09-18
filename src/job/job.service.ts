@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Job, JobStatus } from './job.entity.js'
 import { CreateJobDto } from './dto/create-job.dto.js';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 
 
 @Injectable()
@@ -10,6 +12,9 @@ export class JobService {
   constructor(
     @InjectRepository(Job)
     private readonly jobRepository: Repository<Job>,
+
+    @InjectQueue('jobs')
+    private readonly jobQueue: Queue,
   ) {}
 
    async create(createJobDto: CreateJobDto): Promise<Job> {
@@ -50,22 +55,16 @@ export class JobService {
     await this.jobRepository.remove(job);
   }
 
-  async run(id: string): Promise<Job> {
-  const job = await this.findOne(id);
+    async run(id: string): Promise<Job> {
+    const job = await this.findOne(id);
 
-    job.status = JobStatus.RUNNING;
-    await this.jobRepository.save(job);
+    job.status = JobStatus.PENDING;
+    const savedJob = await this.jobRepository.save(job);
 
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+    await this.jobQueue.add('execute-job', {
+      jobId: savedJob.id,
+    });
 
-      job.status = JobStatus.COMPLETED;
-      return await this.jobRepository.save(job);
-    } catch (error) {
-      job.status = JobStatus.FAILED;
-      await this.jobRepository.save(job);
-
-      throw error;
-    }
+    return savedJob;
   }
 }
