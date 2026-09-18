@@ -31,7 +31,7 @@ export class JobProcessor extends WorkerHost {
     console.log(`Processing job: ${jobId}`);
 
     await new Promise((resolve) => setTimeout(resolve, 3000));
-
+    
     dbJob.status = JobStatus.COMPLETED;
     await this.jobRepository.save(dbJob);
 
